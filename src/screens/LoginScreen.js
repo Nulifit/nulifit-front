@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { TouchableOpacity, StyleSheet, View, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
@@ -10,6 +10,8 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+
+import api from '../services/api'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -23,10 +25,28 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
+
+    api.post("sessions",{
+      email: email.value,
+      password: password.value
     })
+      .then((response) => {
+        console.log(response.data);
+        Alert.alert(
+          `Bem vindo!`
+        );
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        })
+      })
+      .catch((err) => {
+        Alert.alert(
+          'Erro no login 🥴',
+          'Ocorreu um erro ao fazer login, tente novamente.',
+        );
+        console.error("ops! ocorreu um erro" + err);
+      });
   }
 
   return (

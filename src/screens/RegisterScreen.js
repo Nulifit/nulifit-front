@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
@@ -11,6 +11,8 @@ import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
+
+import api from '../services/api'
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState({ value: '', error: '' })
@@ -27,10 +29,29 @@ export default function RegisterScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
+
+    api.post("users",{
+      name: name.value,
+      email: email.value,
+      password: password.value
     })
+      .then((response) => {
+        console.log(response.data);
+        Alert.alert(
+          `🎉 Cadastro realizado ${response.data.name}`
+        );
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Dashboard' }],
+        })
+      })
+      .catch((err) => {
+        Alert.alert(
+          'Erro no cadastro 🥴',
+          'Ocorreu um erro ao fazer cadastro, tente novamente.',
+        );
+        console.error("ops! ocorreu um erro" + err);
+      });
   }
 
   return (
