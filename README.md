@@ -1,4 +1,4 @@
-# React Native Login Template
+# Nulifit
 ## How to use?
 
 1. Download or clone this repo.
