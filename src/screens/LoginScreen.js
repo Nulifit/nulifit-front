@@ -31,9 +31,8 @@ export default function LoginScreen({ navigation }) {
       password: password.value
     })
       .then((response) => {
-        console.log(response.data);
         Alert.alert(
-          `Bem vindo!`
+          `Bem vindo ` + response.data.user.name + '!'
         );
         navigation.reset({
           index: 0,
@@ -41,11 +40,18 @@ export default function LoginScreen({ navigation }) {
         })
       })
       .catch((err) => {
-        Alert.alert(
-          'Erro no login 🥴',
-          'Ocorreu um erro ao fazer login, tente novamente.',
-        );
-        console.error("ops! ocorreu um erro" + err);
+        if (err.response){
+          Alert.alert(
+            'Erro no login 🥴',
+            '' + err.response.data.message
+          );
+        }else{
+          Alert.alert(
+            'Erro no login 🥴',
+            'Ocorreu um erro ao fazer login, tente novamente.',
+          );
+          console.error("ops! ocorreu um erro" + err);
+        }
       });
   }
 
