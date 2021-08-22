@@ -38,7 +38,7 @@ export default function RegisterScreen({ navigation }) {
       .then((response) => {
         console.log(response.data);
         Alert.alert(
-          `🎉 Cadastro realizado ${response.data.name}`
+          `🎉 Cadastro realizado! Bem vindo ${response.data.name}`
         );
         navigation.reset({
           index: 0,
