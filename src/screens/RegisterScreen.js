@@ -36,13 +36,12 @@ export default function RegisterScreen({ navigation }) {
       password: password.value
     })
       .then((response) => {
-        console.log(response.data);
         Alert.alert(
           `🎉 Cadastro realizado! Bem vindo ${response.data.name}`
         );
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Dashboard' }],
+          routes: [{ name: 'DatasheetsScreen' }],
         })
       })
       .catch((err) => {
