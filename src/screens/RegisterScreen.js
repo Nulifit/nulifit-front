@@ -12,6 +12,8 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { nameValidator } from '../helpers/nameValidator'
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import api from '../services/api'
 
 export default function RegisterScreen({ navigation }) {
@@ -30,14 +32,19 @@ export default function RegisterScreen({ navigation }) {
       return
     }
 
+    async function save(response){
+      await AsyncStorage.setItem('@nulifit:user', response.data.id)
+    }
+
     api.post("users",{
       name: name.value,
       email: email.value,
       password: password.value
     })
       .then((response) => {
+        save(response);
         Alert.alert(
-          `🎉 Cadastro realizado! Bem vindo ${response.data.name}`
+          `🎉 Cadastro realizado! Bem vindo ${name.value}`
         );
         navigation.reset({
           index: 0,
