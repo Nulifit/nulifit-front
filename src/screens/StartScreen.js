@@ -19,7 +19,7 @@ export default function StartScreen({ navigation }) {
       <Button
         mode="outlined"
         // onPress={() => navigation.navigate('RegisterScreen')}
-        onPress={() => navigation.navigate('DatasheetsScreen')}
+        onPress={() => navigation.navigate('RegisterScreen')}
       >
         Cadastre-se
       </Button>
