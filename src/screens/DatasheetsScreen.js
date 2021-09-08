@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react'
-import { View, Switch, StyleSheet, Text, Alert, SafeAreaView, KeyboardAvoidingView, TouchableOpacity, Platform } from 'react-native'
-import DateTimePicker , {Event} from '@react-native-community/datetimepicker';
+import React, {useState} from 'react'
+import { View, StyleSheet, Text, Alert, TouchableOpacity, Platform } from 'react-native'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { theme } from '../core/theme'
-import { format, isBefore } from 'date-fns';
+import { format} from 'date-fns';
 import Background from '../components/Background'
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';
@@ -10,17 +10,19 @@ import Button from '../components/Button';
 import api from '../services/api'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import {Picker} from '@react-native-picker/picker';
 
 export default function DatasheetsScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState('date');
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const [isEnabled, setIsEnabled] = useState(1);
   const [height, setHeight] = useState({ value: '', error: '' }) 
   const [altura, setAltura] = useState({ value: '', error: '' }) 
-  const [sex, setSex] = useState()
   const [idload, setIdload] = useState()
+  const [selectedGoal, setSelectedGoal] = useState(1);
+  const [selectedSexo, setSelectedSexo] = useState(1);
+
 
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -45,24 +47,12 @@ export default function DatasheetsScreen({ navigation }) {
   getId();
 
   const onPressed = () => {
-    console.log(isEnabled)
-    if(isEnabled == true){
-      setIsEnabled(2)
-    }else{
-      setIsEnabled(1)
-    }
-
-    console.log('Aqui oi:' + idload, 
-    height.value, 
-    altura.value,
-    date,
-    sex,)
-
     api.post("datasheets",{
       height: height.value,
       weight: altura.value,
       birthDate: date,
-      sex: isEnabled,
+      sex: selectedSexo,
+      goal: selectedGoal,
       userId: idload,
     })
       .then((response) => {
@@ -85,124 +75,116 @@ export default function DatasheetsScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <Background>
-          <View style={styles.form}>
-            <View style={styles.date}>
-              <Text style={styles.alertLabel}>
-                Qual a sua data de nascimento?
-              </Text> 
-              {show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode={mode}
-                  is24Hour={true}
-                  display="spinner"
-                  onChange={onChangeDate}
-                />
-              )}
-              <TouchableOpacity 
-                  style={styles.dateTimePickerButton}
-                  onPress={showDatepicker}
-              >
-                  <Text style={styles.dateTimePickerText}>
-                    {`Mudar  ${format(date, 'dd')}`+
-                    ` - ` + `${format(date, 'MM')}`+
-                    ` - ` + `${format(date, 'Y')}`}
-                  </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <Text style={styles.alertLabel}>
-                  Qual o seu sexo?
+    <Background >
+        <View style={styles.date}>
+          <Text style={styles.alertLabel}>
+            Qual a sua data de nascimento?
+          </Text> 
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={onChangeDate}
+            />
+          )}
+          <TouchableOpacity 
+              style={styles.dateTimePickerButton}
+              onPress={showDatepicker}
+          >
+              <Text style={styles.dateTimePickerText}>
+                {`Mudar  ${format(date, 'dd')}`+
+                ` - ` + `${format(date, 'MM')}`+
+                ` - ` + `${format(date, 'Y')}`}
               </Text>
-              <Text style={styles.sexo}>
-                🧔
-                <Switch
-                  style={styles.snp}
-                  trackColor={{ false: "#007bff", true: "#fc4cee" }}
-                  thumbColor={isEnabled ? "#f4f3f3" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-                👩
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.alertLabel}>
-                  Qual o seu peso?
-              </Text>
-              <TextInput
-                style={styles.button}
-                label="Peso"
-                returnKeyType="next"
-                onChangeText={(text) => setHeight({ value: text, error: '' })}
-                value={height.value}
-              />
-            </View>
-            <View>
-              <Text style={styles.alertLabel}>
-                  Qual a sua altura?
-              </Text>
-              <TextInput
-                style={styles.button}
-                label="Altura"
-                returnKeyType="next"
-                onChangeText={(text) => setAltura({ value: text, error: '' })}
-                value={altura.value}
-              />
-            </View>
-            <Button mode="contained" onPress={onPressed}>
-              Confirmar
-            </Button>
-          </View>
-        </Background>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <Text style={styles.alertLabel}>
+              Qual o seu sexo?
+          </Text>
+          <Picker
+            selectedValue={selectedSexo}
+            onValueChange={(itemValue) =>
+              setSelectedSexo(itemValue)
+            }>
+            <Picker.Item label="Masculino" value="1" />
+            <Picker.Item label="Feminino" value="2" />
+          </Picker>
+        </View>
+        <View>
+          <Text style={styles.alertLabel}>
+              Qual o seu peso?
+          </Text>
+          <TextInput
+            style={styles.field}
+            label="Peso"
+            returnKeyType="next"
+            onChangeText={(text) => setHeight({ value: text, error: '' })}
+            value={height.value}
+          />
+        </View>
+        <View>
+          <Text style={styles.alertLabel}>
+              Qual a sua altura?
+          </Text>
+          <TextInput
+            style={styles.field}
+            label="Altura"
+            returnKeyType="next"
+            onChangeText={(text) => setAltura({ value: text, error: '' })}
+            value={altura.value}
+          />
+        </View>
+        <View>
+          <Text style={styles.alertLabel}>
+             Qual seu objetivo?
+          </Text>
+          <Picker
+            selectedValue={selectedGoal}
+            onValueChange={(itemValue) =>
+              setSelectedGoal(itemValue)
+            }>
+            <Picker.Item label="Manter peso" value="1" />
+            <Picker.Item label="Ganhar Peso" value="2" />
+            <Picker.Item label="Emagrecer" value="3" />
+          </Picker>
+        
+        </View>
+        <Button 
+          mode="contained" 
+          onPress={onPressed}>
+          Confirmar
+        </Button>
+    </Background>
   )
 }
 
 const styles = StyleSheet.create({
-  form: {
-    alignItems: 'center',
-  },
   date: {
     alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-around'
   },
   alertLabel:{
     textAlign: 'center',
     fontSize: 21,
     color: theme.colors.primary,
     fontWeight: 'bold',
+    marginTop: 20,
   },
   dateTimePickerButton:{
     width: '100%',
     alignItems: 'center',
     paddingVertical: 15,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   dateTimePickerText:{
     textAlign: 'center',
     fontSize: 21,
   },
-  button: {
-    paddingBottom: 40,
+  field: {
+    paddingBottom: 5,
     width: 200,
-  },
-  sexo: {
-    paddingBottom: 40,
-    alignSelf: 'center',
   }
 })

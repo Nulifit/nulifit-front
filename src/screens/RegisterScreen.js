@@ -43,9 +43,9 @@ export default function RegisterScreen({ navigation }) {
     })
       .then((response) => {
         save(response);
-        Alert.alert(
-          `🎉 Cadastro realizado! Bem vindo ${name.value}`
-        );
+        // Alert.alert(
+        //   `🎉 Cadastro realizado! Bem vindo ${name.value}`
+        // );
         navigation.reset({
           index: 0,
           routes: [{ name: 'DatasheetsScreen' }],
