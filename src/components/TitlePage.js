@@ -1,0 +1,20 @@
+import React from 'react'
+import { StyleSheet } from 'react-native'
+import { Text } from 'react-native-paper'
+import { theme } from '../core/theme'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
+
+export default function TitlePage(props) {
+  return <Text style={styles.header} {...props} />
+}
+
+const styles = StyleSheet.create({
+  header: {
+    position: 'absolute',
+    top: 8 + getStatusBarHeight(),
+    left: 45,
+    fontSize: 21,
+    color: theme.colors.primary,
+    fontWeight: 'bold',
+  },
+})

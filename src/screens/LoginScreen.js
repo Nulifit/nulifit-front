@@ -11,6 +11,8 @@ import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import api from '../services/api'
 
 export default function LoginScreen({ navigation }) {
@@ -21,9 +23,14 @@ export default function LoginScreen({ navigation }) {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
+      console.log('oi')
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
+    }
+
+    async function save(response){
+      await AsyncStorage.setItem('@nulifit:name', response)
     }
 
     api.post("sessions",{
@@ -34,6 +41,7 @@ export default function LoginScreen({ navigation }) {
         Alert.alert(
           `Bem vindo ` + response.data.user.name + '!'
         );
+        save(response.data.user.name);
         navigation.reset({
           index: 0,
           routes: [{ name: 'Dashboard' }],
@@ -97,6 +105,16 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.link}>Cadastre-se</Text>
         </TouchableOpacity>
       </View>
+
+{/* Remover */}
+
+      <View>
+        <Text>Teste</Text>
+        <TouchableOpacity onPress={() => navigation.replace('MacronutrienteScreen')}>
+          <Text style={styles.link}>Pular login</Text>
+        </TouchableOpacity>
+      </View>
+
     </Background>
   )
 }
