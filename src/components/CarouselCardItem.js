@@ -9,7 +9,7 @@ const CarouselCardItem = ({ item, index }) => {
     <View style={styles.container} key={index}>
       <Text style={styles.resumo}> Resumo </Text>
       <Text style={styles.header}>{item.title}</Text>
-      <Text style={styles.value}>{item.value}</Text>
+      <Text style={styles.value}>Meta: {item.value} {item.un}</Text>
       <Text style={styles.body}>{item.body}</Text>
     </View>
   )
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingLeft: 20,
     paddingRight: 20
-  }
+  },
 })
 
 export default CarouselCardItem
