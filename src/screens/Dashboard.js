@@ -74,6 +74,17 @@ export default function Dashboard({ navigation }) {
       >
         Rélatorio
       </Button>
+      <Button
+        mode="outlined"
+        onPress={() =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'StartScreen' }],
+          })
+        }
+      >
+        Logout
+      </Button>
     </View>
   )
 }
