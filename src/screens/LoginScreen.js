@@ -30,7 +30,8 @@ export default function LoginScreen({ navigation }) {
     }
 
     async function save(response){
-      await AsyncStorage.setItem('@nulifit:name', response)
+      await AsyncStorage.setItem('@nulifit:name', response.user.name)
+      await AsyncStorage.setItem('@nulifit:user', response.user.id)
     }
 
     api.post("sessions",{
@@ -41,7 +42,7 @@ export default function LoginScreen({ navigation }) {
         Alert.alert(
           `Bem vindo ` + response.data.user.name + '!'
         );
-        save(response.data.user.name);
+        save(response.data);
         navigation.reset({
           index: 0,
           routes: [{ name: 'Dashboard' }],
@@ -105,16 +106,6 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.link}>Cadastre-se</Text>
         </TouchableOpacity>
       </View>
-
-{/* Remover */}
-
-      <View>
-        <Text>Teste</Text>
-        <TouchableOpacity onPress={() => navigation.replace('MacronutrienteScreen')}>
-          <Text style={styles.link}>Pular login</Text>
-        </TouchableOpacity>
-      </View>
-
     </Background>
   )
 }

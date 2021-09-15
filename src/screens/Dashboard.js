@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { View, StyleSheet} from "react-native"
+import { View, StyleSheet, Alert} from "react-native"
 import HeaderMenu from '../components/HeaderMenu'
 import Button from '../components/Button'
 import Carousel from 'react-native-snap-carousel';
@@ -7,12 +7,15 @@ import CardMenu, { SLIDER_WIDTH, ITEM_WIDTH } from '../components/CardMenu'
 
 import { theme } from '../core/theme'
 
+import api from '../services/api'
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import data from '../services/dataTemp';
 
 export default function Dashboard({ navigation }) {
   const isCarousel = React.useRef(null);
-  const [idload, setIdload] = useState()
+  const [idload, setIdload] = useState();
+  const [dataApi, setDataApi] = useState();
 
   async function getId(){
     const id = await AsyncStorage.getItem('@nulifit:user');
@@ -22,12 +25,12 @@ export default function Dashboard({ navigation }) {
   getId();
 
   const onPressed = () => {
-    api.get("macronutrientes",{
+    api.get("macronutrients",{
       userId: idload,
     })
     .then((response) => {
-      console.log(response)
-      // return response;
+      console.log(Object.values(response.data));
+      setDataApi(Object.values(response.data));
     })
     .catch((err) => {
         Alert.alert(
@@ -56,7 +59,11 @@ export default function Dashboard({ navigation }) {
           useScrollView={true}
         />
       </View>
-  
+      <Button
+        onPress={onPressed}
+      >
+        Gere 
+      </Button>  
       <Button
         mode="outlined"
         onPress={() =>
