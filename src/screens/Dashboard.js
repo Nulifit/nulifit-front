@@ -15,7 +15,7 @@ import data from '../services/dataTemp';
 export default function Dashboard({ navigation }) {
   const isCarousel = React.useRef(null);
   const [idload, setIdload] = useState();
-  const [dataApi, setDataApi] = useState();
+  const [dataApi, setDataApi] = useState([]);
 
   async function getId(){
     const id = await AsyncStorage.getItem('@nulifit:user');
@@ -24,12 +24,11 @@ export default function Dashboard({ navigation }) {
 
   getId();
 
-  const onPressed = () => {
-    api.get("macronutrients",{
+  function onPressed(){
+    api.post("macronutrients/user/",{
       userId: idload,
     })
     .then((response) => {
-      console.log(Object.values(response.data));
       setDataApi(Object.values(response.data));
     })
     .catch((err) => {
@@ -40,7 +39,7 @@ export default function Dashboard({ navigation }) {
         console.error("ops! ocorreu um erro inesperado" + err);
     });
   }
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -51,7 +50,7 @@ export default function Dashboard({ navigation }) {
           layout="default"
           layoutCardOffset={9}
           ref={isCarousel}
-          data={data}
+          data={dataApi}
           renderItem={CardMenu}
           sliderWidth={SLIDER_WIDTH}
           itemWidth={ITEM_WIDTH}
@@ -63,12 +62,13 @@ export default function Dashboard({ navigation }) {
         onPress={onPressed}
       >
         Gere 
-      </Button>  
+      </Button>
       <Button
         mode="outlined"
         onPress={() =>
           navigation.navigate(
-            'MacronutrienteScreen'
+            'MacronutrienteScreen',
+            {otherParam: dataApi,}
           )
         }
       >
